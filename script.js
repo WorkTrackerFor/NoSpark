@@ -99,8 +99,8 @@ if (localStorage.getItem("summary")) {
   $("#summary").innerHTML = localStorage.getItem("summary");
 }
 
-// -------- Generate Flashcards --------
-function generateFlashcards(text) {
+// -------- Generate Questions + Answers (No flip) --------
+function generateQA(text) {
   const lines = text.split(/\n/).map(l => l.trim()).filter(Boolean);
   const qaPairs = [];
 
@@ -112,18 +112,33 @@ function generateFlashcards(text) {
     }
   });
 
-  // Fallback to sentences if less than 10 cards
-  if (qaPairs.length < 10) {
+  // Fallback: split into sentences
+  if (qaPairs.length === 0) {
     const sentences = text.split(/[.!?]\s/).filter(Boolean);
-    for (let i = 0; qaPairs.length < 10 && i < sentences.length; i++) {
-      const s = sentences[i];
-      qaPairs.push({ q: `Explain: ${s.slice(0, 50)}...`, a: s });
-    }
+    sentences.forEach(s => qaPairs.push({ q: s, a: s }));
   }
 
-  return qaPairs.slice(0, 10); // max 10
+  return qaPairs.slice(0, 10);
 }
 
+function renderQACards(qaPairs) {
+  const container = $("#flashcards");
+  container.innerHTML = ""; // clear previous
+
+  qaPairs.forEach((f, i) => {
+    const card = document.createElement("div");
+    card.className = "pane glass";
+    card.innerHTML = `
+      <div class="card-title">Q${i + 1}: ${f.q}</div>
+      <div class="card-text"><strong>Answer:</strong> ${f.a}</div>
+    `;
+    container.appendChild(card);
+  });
+
+  localStorage.setItem("flashcards", container.innerHTML);
+}
+
+// -------- Flash Button --------
 $("#flashBtn").addEventListener("click", () => {
   const text = notesInput.value.trim();
   if (!text) {
@@ -131,48 +146,18 @@ $("#flashBtn").addEventListener("click", () => {
     return;
   }
 
-  const flashcards = generateFlashcards(text);
-
-  $("#flashcards").innerHTML = flashcards
-    .map((f, i) => `
-      <div class="flip" data-index="${i}">
-        <div class="flip-inner">
-          <div class="flip-front">
-            <div>
-              <div class="card-title">Question</div>
-              <div>${f.q}</div>
-              <p class="card-text">(Click to flip)</p>
-            </div>
-          </div>
-          <div class="flip-back">
-            <div>
-              <div class="card-title">Answer</div>
-              <div>${f.a}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    `).join("");
-
-  $$("#flashcards .flip").forEach(card => {
-    card.addEventListener("click", () => {
-      card.classList.toggle("flipped");
-      playSound("#sFlip");
-    });
-  });
-
-  localStorage.setItem("flashcards", $("#flashcards").innerHTML);
+  const qaPairs = generateQA(text);
+  renderQACards(qaPairs);
   playSound("#sSuccess");
 });
-if (localStorage.getItem("flashcards")) {
-  $("#flashcards").innerHTML = localStorage.getItem("flashcards");
-  $$("#flashcards .flip").forEach(card => {
-    card.addEventListener("click", () => {
-      card.classList.toggle("flipped");
-      playSound("#sFlip");
-    });
-  });
+
+// -------- Restore saved QA --------
+function restoreQACards() {
+  const saved = localStorage.getItem("flashcards");
+  if (!saved) return;
+  $("#flashcards").innerHTML = saved;
 }
+restoreQACards();
 
 // -------- Clear Button --------
 $("#clearBtn").addEventListener("click", () => {
@@ -224,12 +209,7 @@ $("#importBtn").addEventListener("click", () => {
         $("#flashcards").innerHTML = data.flashcards;
         localStorage.setItem("flashcards", data.flashcards);
       }
-      $$("#flashcards .flip").forEach(card => {
-        card.addEventListener("click", () => {
-          card.classList.toggle("flipped");
-          playSound("#sFlip");
-        });
-      });
+      restoreQACards();
       playSound("#sSuccess");
     };
     reader.readAsText(file);
