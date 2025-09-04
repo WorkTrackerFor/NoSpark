@@ -104,24 +104,22 @@ function generateFlashcards(text) {
   const lines = text.split(/\n/).map((l) => l.trim()).filter(Boolean);
   const qaPairs = [];
 
-  lines.forEach((line) => {
+  lines.forEach((line, i) => {
     if (line.includes(":")) {
       const [q, a] = line.split(":");
       qaPairs.push({ q: q.trim(), a: a.trim() });
+    } else if (line.includes(" is ")) {
+      const [q, a] = line.split(" is ");
+      qaPairs.push({ q: q.trim() + "?", a: a.trim() });
+    } else {
+      qaPairs.push({ q: `Q${i + 1}: ${line}`, a: `Answer: ${line}` });
     }
   });
-
-  if (qaPairs.length === 0) {
-    const sentences = text.split(/[.!?]\s/).filter(Boolean);
-    sentences.forEach((s, i) => {
-      qaPairs.push({ q: `Q${i + 1}: ${s.trim()}?`, a: `Answer derived from: ${s.trim()}` });
-    });
-  }
 
   return qaPairs;
 }
 
-$("#flashBtn").addEventListener("click", () => {
+function renderFlashcards() {
   const text = notesInput.value.trim();
   if (!text) {
     playSound("#sError");
@@ -134,13 +132,25 @@ $("#flashBtn").addEventListener("click", () => {
       (f, i) => `
     <div class="flip" data-index="${i}">
       <div class="flip-inner">
-        <div class="flip-front"><div><div class="card-title">Question</div><div>${f.q}</div><p class="card-text">(Flip to see answer)</p></div></div>
-        <div class="flip-back"><div><div class="card-title">Answer</div><div>${f.a}</div></div></div>
+        <div class="flip-front">
+          <div>
+            <div class="card-title">Question</div>
+            <div>${f.q}</div>
+            <p class="card-text">(Click to flip)</p>
+          </div>
+        </div>
+        <div class="flip-back">
+          <div>
+            <div class="card-title">Answer</div>
+            <div>${f.a}</div>
+          </div>
+        </div>
       </div>
     </div>`
     )
     .join("");
 
+  // Attach flipping
   $$("#flashcards .flip").forEach((card) => {
     card.addEventListener("click", () => {
       card.classList.toggle("flipped");
@@ -150,14 +160,13 @@ $("#flashBtn").addEventListener("click", () => {
 
   localStorage.setItem("flashcards", $("#flashcards").innerHTML);
   playSound("#sSuccess");
-});
+}
+
+$("#flashBtn").addEventListener("click", renderFlashcards);
 if (localStorage.getItem("flashcards")) {
   $("#flashcards").innerHTML = localStorage.getItem("flashcards");
   $$("#flashcards .flip").forEach((card) => {
-    card.addEventListener("click", () => {
-      card.classList.toggle("flipped");
-      playSound("#sFlip");
-    });
+    card.addEventListener("click", () => card.classList.toggle("flipped"));
   });
 }
 
