@@ -128,17 +128,9 @@ textarea{
 .btn{
   border:none;border-radius:14px;padding:12px 16px;cursor:pointer;font-weight:700;
 }
-.btn.primary{
-  color:white;
-  background:linear-gradient(135deg,var(--brand1),var(--brand2));
-}
-.btn.accent{
-  color:white;
-  background:linear-gradient(135deg,var(--accent1),var(--accent2));
-}
-.btn.ghost{
-  background:transparent;color:var(--text);border:1px dashed var(--stroke)
-}
+.btn.primary{color:white;background:linear-gradient(135deg,var(--brand1),var(--brand2));}
+.btn.accent{color:white;background:linear-gradient(135deg,var(--accent1),var(--accent2));}
+.btn.ghost{background:transparent;color:var(--text);border:1px dashed var(--stroke)}
 
 /* Summary */
 .summary{display:block;min-height:48px}
@@ -148,7 +140,7 @@ textarea{
 }
 .dark .summary .card{background:rgba(18,24,39,.6)}
 
-/* Flashcards (flip) */
+/* Quiz / Flip Cards */
 .cards-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
 .flip{perspective:1000px}
 .flip-inner{
@@ -190,11 +182,9 @@ textarea{
   content:"";position:absolute;width:22px;height:22px;left:4px;top:4px;
   background:white;border-radius:50%;transition:.3s;
 }
-input:checked + .slider:before{
-  transform:translateX(24px);
-}
+input:checked + .slider:before{transform:translateX(24px);}
 
 /* Utility Classes */
 .text-center{text-align:center}
 .mb-12{margin-bottom:12px}
-.mt-12{margin-top:12px}/* CSS content from user snippet */
+.mt-12{margin-top:12px}
