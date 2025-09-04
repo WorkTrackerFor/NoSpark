@@ -3,11 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AI Notes → Flashcards</title>
+  <title>AI Notes → Quiz Generator</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- App Shell -->
   <div class="app-wrap">
 
     <!-- Top Bar -->
@@ -47,7 +46,7 @@
       <section id="home" class="tab active">
         <div class="pane glass">
           <div class="pane-head">
-            <h2>Summarise notes & make flashcards</h2>
+            <h2>Summarise notes & generate quizzes</h2>
             <div class="head-actions">
               <button class="chip" id="importBtn">Import</button>
               <button class="chip" id="exportBtn">Export</button>
@@ -59,7 +58,7 @@
 
           <div class="actions-row">
             <button class="btn primary" id="summariseBtn">Summarise Notes</button>
-            <button class="btn accent" id="flashBtn">Generate Flashcards</button>
+            <button class="btn accent" id="flashBtn">Generate Quiz</button>
             <button class="btn ghost" id="clearBtn">Clear</button>
           </div>
         </div>
@@ -72,7 +71,7 @@
 
           <div class="pane glass">
             <div class="pane-head">
-              <h3>Flashcards</h3>
+              <h3>Quiz Questions</h3>
             </div>
             <div id="flashcards" class="cards-wrap"></div>
           </div>
@@ -131,7 +130,7 @@
           <h2>About</h2>
           <ul class="about-list">
             <li><strong>App Version:</strong> 2.0.0</li>
-            <li><strong>Purpose:</strong> Summarise notes and generate study flashcards with a delightful UI.</li>
+            <li><strong>Purpose:</strong> Summarise notes and generate quiz questions automatically with a clean UI.</li>
             <li><strong>Developer:</strong> Lishith — made with AI & creativity ✨</li>
           </ul>
         </div>
