@@ -1,6 +1,6 @@
 // -------- Utility Functions --------
-const $ = (sel) => document.querySelector(sel);
-const $$ = (sel) => document.querySelectorAll(sel);
+const $ = sel => document.querySelector(sel);
+const $$ = sel => document.querySelectorAll(sel);
 
 // Sound helpers
 function playSound(id) {
@@ -14,11 +14,11 @@ function playSound(id) {
 }
 
 // -------- Tabs --------
-$$(".tab-btn").forEach((btn) => {
+$$(".tab-btn").forEach(btn => {
   btn.addEventListener("click", () => {
-    $$(".tab-btn").forEach((b) => b.classList.remove("active"));
+    $$(".tab-btn").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
-    $$(".tab").forEach((t) => t.classList.remove("active"));
+    $$(".tab").forEach(t => t.classList.remove("active"));
     $("#" + btn.dataset.tab).classList.add("active");
     playSound("#sClick");
   });
@@ -39,7 +39,7 @@ darkModeToggle.addEventListener("change", () => {
 applyTheme(localStorage.getItem("theme") === "dark");
 
 // -------- Font Size --------
-$("#fontSizeSel").addEventListener("change", (e) => {
+$("#fontSizeSel").addEventListener("change", e => {
   document.documentElement.style.fontSize = e.target.value + "px";
   localStorage.setItem("fontSize", e.target.value);
   playSound("#sClick");
@@ -50,7 +50,7 @@ if (localStorage.getItem("fontSize")) {
 }
 
 // -------- Density --------
-$("#densitySel").addEventListener("change", (e) => {
+$("#densitySel").addEventListener("change", e => {
   document.body.dataset.density = e.target.value;
   localStorage.setItem("density", e.target.value);
   playSound("#sClick");
@@ -61,7 +61,7 @@ if (localStorage.getItem("density")) {
 }
 
 // -------- Sound Toggle --------
-$("#soundToggle").addEventListener("change", (e) => {
+$("#soundToggle").addEventListener("change", e => {
   localStorage.setItem("sound", e.target.checked ? "on" : "off");
   playSound("#sClick");
 });
@@ -89,7 +89,7 @@ $("#summariseBtn").addEventListener("click", () => {
   const sentences = text.split(/[.!?]\s/).filter(Boolean);
   const summarySentences = sentences.slice(0, 3);
   $("#summary").innerHTML = summarySentences
-    .map((s) => `<div class="card">${s.trim()}.</div>`)
+    .map(s => `<div class="card">${s.trim()}.</div>`)
     .join("");
 
   localStorage.setItem("summary", $("#summary").innerHTML);
@@ -101,25 +101,30 @@ if (localStorage.getItem("summary")) {
 
 // -------- Generate Flashcards --------
 function generateFlashcards(text) {
-  const lines = text.split(/\n/).map((l) => l.trim()).filter(Boolean);
+  const lines = text.split(/\n/).map(l => l.trim()).filter(Boolean);
   const qaPairs = [];
 
-  lines.forEach((line, i) => {
+  // Colon-based Q/A
+  lines.forEach(line => {
     if (line.includes(":")) {
       const [q, a] = line.split(":");
-      qaPairs.push({ q: q.trim(), a: a.trim() });
-    } else if (line.includes(" is ")) {
-      const [q, a] = line.split(" is ");
-      qaPairs.push({ q: q.trim() + "?", a: a.trim() });
-    } else {
-      qaPairs.push({ q: `Q${i + 1}: ${line}`, a: `Answer: ${line}` });
+      if (q && a) qaPairs.push({ q: q.trim(), a: a.trim() });
     }
   });
 
-  return qaPairs;
+  // Fallback to sentences if less than 10 cards
+  if (qaPairs.length < 10) {
+    const sentences = text.split(/[.!?]\s/).filter(Boolean);
+    for (let i = 0; qaPairs.length < 10 && i < sentences.length; i++) {
+      const s = sentences[i];
+      qaPairs.push({ q: `Explain: ${s.slice(0, 50)}...`, a: s });
+    }
+  }
+
+  return qaPairs.slice(0, 10); // max 10
 }
 
-function renderFlashcards() {
+$("#flashBtn").addEventListener("click", () => {
   const text = notesInput.value.trim();
   if (!text) {
     playSound("#sError");
@@ -127,31 +132,29 @@ function renderFlashcards() {
   }
 
   const flashcards = generateFlashcards(text);
+
   $("#flashcards").innerHTML = flashcards
-    .map(
-      (f, i) => `
-    <div class="flip" data-index="${i}">
-      <div class="flip-inner">
-        <div class="flip-front">
-          <div>
-            <div class="card-title">Question</div>
-            <div>${f.q}</div>
-            <p class="card-text">(Click to flip)</p>
+    .map((f, i) => `
+      <div class="flip" data-index="${i}">
+        <div class="flip-inner">
+          <div class="flip-front">
+            <div>
+              <div class="card-title">Question</div>
+              <div>${f.q}</div>
+              <p class="card-text">(Click to flip)</p>
+            </div>
           </div>
-        </div>
-        <div class="flip-back">
-          <div>
-            <div class="card-title">Answer</div>
-            <div>${f.a}</div>
+          <div class="flip-back">
+            <div>
+              <div class="card-title">Answer</div>
+              <div>${f.a}</div>
+            </div>
           </div>
         </div>
       </div>
-    </div>`
-    )
-    .join("");
+    `).join("");
 
-  // Attach flipping
-  $$("#flashcards .flip").forEach((card) => {
+  $$("#flashcards .flip").forEach(card => {
     card.addEventListener("click", () => {
       card.classList.toggle("flipped");
       playSound("#sFlip");
@@ -160,13 +163,14 @@ function renderFlashcards() {
 
   localStorage.setItem("flashcards", $("#flashcards").innerHTML);
   playSound("#sSuccess");
-}
-
-$("#flashBtn").addEventListener("click", renderFlashcards);
+});
 if (localStorage.getItem("flashcards")) {
   $("#flashcards").innerHTML = localStorage.getItem("flashcards");
-  $$("#flashcards .flip").forEach((card) => {
-    card.addEventListener("click", () => card.classList.toggle("flipped"));
+  $$("#flashcards .flip").forEach(card => {
+    card.addEventListener("click", () => {
+      card.classList.toggle("flipped");
+      playSound("#sFlip");
+    });
   });
 }
 
@@ -186,7 +190,7 @@ $("#exportBtn").addEventListener("click", () => {
   const data = {
     notes: notesInput.value,
     summary: $("#summary").innerHTML,
-    flashcards: $("#flashcards").innerHTML,
+    flashcards: $("#flashcards").innerHTML
   };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
@@ -202,11 +206,11 @@ $("#importBtn").addEventListener("click", () => {
   const input = document.createElement("input");
   input.type = "file";
   input.accept = "application/json";
-  input.onchange = (e) => {
+  input.onchange = e => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (ev) => {
+    reader.onload = ev => {
       const data = JSON.parse(ev.target.result);
       if (data.notes) {
         notesInput.value = data.notes;
@@ -220,7 +224,7 @@ $("#importBtn").addEventListener("click", () => {
         $("#flashcards").innerHTML = data.flashcards;
         localStorage.setItem("flashcards", data.flashcards);
       }
-      $$("#flashcards .flip").forEach((card) => {
+      $$("#flashcards .flip").forEach(card => {
         card.addEventListener("click", () => {
           card.classList.toggle("flipped");
           playSound("#sFlip");
