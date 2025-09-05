@@ -87,7 +87,7 @@ $("#summariseBtn").addEventListener("click", () => {
   }
 
   const sentences = text.split(/[.!?]\s/).filter(Boolean);
-  const summarySentences = sentences.slice(0, 3);
+  const summarySentences = sentences.slice(0, 10); // bigger summary
   $("#summary").innerHTML = summarySentences
     .map(s => `<div class="card">${s.trim()}.</div>`)
     .join("");
@@ -99,46 +99,7 @@ if (localStorage.getItem("summary")) {
   $("#summary").innerHTML = localStorage.getItem("summary");
 }
 
-// -------- Generate Questions + Answers (No flip) --------
-function generateQA(text) {
-  const lines = text.split(/\n/).map(l => l.trim()).filter(Boolean);
-  const qaPairs = [];
-
-  // Colon-based Q/A
-  lines.forEach(line => {
-    if (line.includes(":")) {
-      const [q, a] = line.split(":");
-      if (q && a) qaPairs.push({ q: q.trim(), a: a.trim() });
-    }
-  });
-
-  // Fallback: split into sentences
-  if (qaPairs.length === 0) {
-    const sentences = text.split(/[.!?]\s/).filter(Boolean);
-    sentences.forEach(s => qaPairs.push({ q: s, a: s }));
-  }
-
-  return qaPairs.slice(0, 10);
-}
-
-function renderQACards(qaPairs) {
-  const container = $("#flashcards");
-  container.innerHTML = ""; // clear previous
-
-  qaPairs.forEach((f, i) => {
-    const card = document.createElement("div");
-    card.className = "pane glass";
-    card.innerHTML = `
-      <div class="card-title">Q${i + 1}: ${f.q}</div>
-      <div class="card-text"><strong>Answer:</strong> ${f.a}</div>
-    `;
-    container.appendChild(card);
-  });
-
-  localStorage.setItem("flashcards", container.innerHTML);
-}
-
-// -------- Flash Button --------
+// -------- Generate Questions & Answers --------
 $("#flashBtn").addEventListener("click", () => {
   const text = notesInput.value.trim();
   if (!text) {
@@ -146,18 +107,34 @@ $("#flashBtn").addEventListener("click", () => {
     return;
   }
 
-  const qaPairs = generateQA(text);
-  renderQACards(qaPairs);
+  const lines = text.split(/\n/).map(l => l.trim()).filter(Boolean);
+  const qaPairs = lines
+    .filter(l => l.toLowerCase().startsWith("define"))
+    .map(l => {
+      const parts = l.split(":");
+      if (parts.length >= 2) {
+        return { q: parts[0].trim(), a: parts.slice(1).join(":").trim() };
+      } else {
+        return { q: l, a: "Answer not provided." };
+      }
+    });
+
+  $("#flashcards").innerHTML = qaPairs
+    .map(f => `
+      <div class="flip-inner" style="height:auto; padding:14px; margin-bottom:12px;">
+        <div>
+          <div class="card-title">${f.q}</div>
+          <div class="card-text">${f.a}</div>
+        </div>
+      </div>
+    `).join("");
+
+  localStorage.setItem("flashcards", $("#flashcards").innerHTML);
   playSound("#sSuccess");
 });
-
-// -------- Restore saved QA --------
-function restoreQACards() {
-  const saved = localStorage.getItem("flashcards");
-  if (!saved) return;
-  $("#flashcards").innerHTML = saved;
+if (localStorage.getItem("flashcards")) {
+  $("#flashcards").innerHTML = localStorage.getItem("flashcards");
 }
-restoreQACards();
 
 // -------- Clear Button --------
 $("#clearBtn").addEventListener("click", () => {
@@ -177,42 +154,4 @@ $("#exportBtn").addEventListener("click", () => {
     summary: $("#summary").innerHTML,
     flashcards: $("#flashcards").innerHTML
   };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "notes_data.json";
-  a.click();
-  URL.revokeObjectURL(url);
-  playSound("#sSuccess");
-});
-
-$("#importBtn").addEventListener("click", () => {
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = "application/json";
-  input.onchange = e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-      const data = JSON.parse(ev.target.result);
-      if (data.notes) {
-        notesInput.value = data.notes;
-        localStorage.setItem("notes", data.notes);
-      }
-      if (data.summary) {
-        $("#summary").innerHTML = data.summary;
-        localStorage.setItem("summary", data.summary);
-      }
-      if (data.flashcards) {
-        $("#flashcards").innerHTML = data.flashcards;
-        localStorage.setItem("flashcards", data.flashcards);
-      }
-      restoreQACards();
-      playSound("#sSuccess");
-    };
-    reader.readAsText(file);
-  };
-  input.click();
-});
+  const blob =
