@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AI Notes → Quiz Generator</title>
+  <title>AI Notes → Q&A</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -17,8 +17,12 @@
       </div>
       <div class="top-actions">
         <button class="icon-btn" id="themeToggleBtn" aria-label="Toggle theme" title="Toggle Light/Dark">
-          <svg class="icon sun" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.76 4.84l-1.8-1.79L3.17 4.84l1.79 1.8 1.8-1.8zm10.48 0l1.8-1.79 1.79 1.79-1.79 1.8-1.8-1.8zM12 4V1h-0v3h0zm0 19v-3h0v3h0zm-8-8H1v0h3v0zm19 0h-3v0h3v0zM6.76 19.16l-1.8 1.79-1.79-1.79 1.79-1.8 1.8 1.8zm10.48 0l1.8 1.79 1.79-1.79-1.79-1.8-1.8 1.8zM12 7a5 5 0 100 10A5 5 0 0012 7z"/></svg>
-          <svg class="icon moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21.64 13a9 9 0 01-11.31-11A9.99 9.99 0 1021.64 13z"/></svg>
+          <svg class="icon sun" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6.76 4.84l-1.8-1.79L3.17 4.84l1.79 1.8 1.8-1.8zm10.48 0l1.8-1.79 1.79 1.79-1.79 1.8-1.8-1.8zM12 4V1h-0v3h0zm0 19v-3h0v3h0zm-8-8H1v0h3v0zm19 0h-3v0h3v0zM6.76 19.16l-1.8 1.79-1.79-1.79 1.79-1.8 1.8 1.8zm10.48 0l1.8 1.79 1.79-1.79-1.79-1.8-1.8 1.8zM12 7a5 5 0 100 10A5 5 0 0012 7z"/>
+          </svg>
+          <svg class="icon moon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M21.64 13a9 9 0 01-11.31-11A9.99 9.99 0 1021.64 13z"/>
+          </svg>
         </button>
       </div>
     </header>
@@ -26,15 +30,21 @@
     <!-- Tabs -->
     <nav class="tabs glass">
       <button class="tab-btn active" data-tab="home" aria-label="Home">
-        <svg viewBox="0 0 24 24" class="icon"><path d="M12 3l10 9h-3v9h-6v-6H11v6H5v-9H2z"/></svg>
+        <svg viewBox="0 0 24 24" class="icon">
+          <path d="M12 3l10 9h-3v9h-6v-6H11v6H5v-9H2z"/>
+        </svg>
         <span>Home</span>
       </button>
       <button class="tab-btn" data-tab="settings" aria-label="Settings">
-        <svg viewBox="0 0 24 24" class="icon"><path d="M19.14 12.94a7.05 7.05 0 000-1.88l2.03-1.58a.5.5 0 00.12-.65l-1.93-3.34a.5.5 0 00-.61-.22l-2.39.96a7.07 7.07 0 00-1.63-.94l-.36-2.56a.5.5 0 00-.49-.43h-3.86a.5.5 0 00-.49.43l-.36 2.56c-.58.24-1.13.55-1.63.94l-2.39-.96a.5.5 0 00-.61.22L2.71 8.83a.5.5 0 00.12.65l2.03 1.58c-.05.31-.08.62-.08.94s.03.63.08.94l-2.03 1.58a.5.5 0 00-.12.65l1.93 3.34c.13.22.39.31.61.22l2.39-.96c.5.39 1.05.7 1.63.94l.36 2.56c.05.24.25.43.49.43h3.86c.24 0 .44-.19.49-.43l.36-2.56c.58-.24 1.13-.55 1.63-.94l2.39.96c.22.09.48 0 .61-.22l1.93-3.34a.5.5 0 00-.12-.65l-2.03-1.58zM12 15.5A3.5 3.5 0 1115.5 12 3.5 3.5 0 0112 15.5z"/></svg>
+        <svg viewBox="0 0 24 24" class="icon">
+          <path d="M19.14 12.94a7.05 7.05 0 000-1.88l2.03-1.58a.5.5 0 00.12-.65l-1.93-3.34a.5.5 0 00-.61-.22l-2.39.96a7.07 7.07 0 00-1.63-.94l-.36-2.56a.5.5 0 00-.49-.43h-3.86a.5.5 0 00-.49.43l-.36 2.56c-.58.24-1.13.55-1.63.94l-2.39-.96a.5.5 0 00-.61.22L2.71 8.83a.5.5 0 00.12.65l2.03 1.58c-.05.31-.08.62-.08.94s.03.63.08.94l-2.03 1.58a.5.5 0 00-.12.65l1.93 3.34c.13.22.39.31.61.22l2.39-.96c.5.39 1.05.7 1.63.94l.36 2.56c.05.24.25.43.49.43h3.86c.24 0 .44-.19.49-.43l.36-2.56c.58-.24 1.13-.55 1.63-.94l2.39.96c.22.09.48 0 .61-.22l1.93-3.34a.5.5 0 00-.12-.65l-2.03-1.58zM12 15.5A3.5 3.5 0 1115.5 12 3.5 3.5 0 0112 15.5z"/>
+        </svg>
         <span>Settings</span>
       </button>
       <button class="tab-btn" data-tab="about" aria-label="About">
-        <svg viewBox="0 0 24 24" class="icon"><path d="M11 17h2v-6h-2v6zm0-8h2V7h-2v2zm1-7a10 10 0 1010 10A10 10 0 0012 2z"/></svg>
+        <svg viewBox="0 0 24 24" class="icon">
+          <path d="M11 17h2v-6h-2v6zm0-8h2V7h-2v2zm1-7a10 10 0 1010 10A10 10 0 0012 2z"/>
+        </svg>
         <span>About</span>
       </button>
     </nav>
@@ -46,7 +56,7 @@
       <section id="home" class="tab active">
         <div class="pane glass">
           <div class="pane-head">
-            <h2>Summarise notes & generate quizzes</h2>
+            <h2>Summarise notes & Q&A</h2>
             <div class="head-actions">
               <button class="chip" id="importBtn">Import</button>
               <button class="chip" id="exportBtn">Export</button>
@@ -58,7 +68,7 @@
 
           <div class="actions-row">
             <button class="btn primary" id="summariseBtn">Summarise Notes</button>
-            <button class="btn accent" id="flashBtn">Generate Quiz</button>
+            <button class="btn accent" id="flashBtn">Generate Q&A</button>
             <button class="btn ghost" id="clearBtn">Clear</button>
           </div>
         </div>
@@ -71,7 +81,7 @@
 
           <div class="pane glass">
             <div class="pane-head">
-              <h3>Quiz Questions</h3>
+              <h3>Q&A</h3>
             </div>
             <div id="flashcards" class="cards-wrap"></div>
           </div>
@@ -130,7 +140,7 @@
           <h2>About</h2>
           <ul class="about-list">
             <li><strong>App Version:</strong> 2.0.0</li>
-            <li><strong>Purpose:</strong> Summarise notes and generate quiz questions automatically with a clean UI.</li>
+            <li><strong>Purpose:</strong> Summarise notes and generate study Q&A with a delightful UI.</li>
             <li><strong>Developer:</strong> Lishith — made with AI & creativity ✨</li>
           </ul>
         </div>
@@ -143,7 +153,6 @@
   <audio id="sClick" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
   <audio id="sSuccess" src="https://actions.google.com/sounds/v1/cartoon/pop.ogg"></audio>
   <audio id="sError" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
-  <audio id="sFlip" src="https://actions.google.com/sounds/v1/impacts/wood_plank_flicks.ogg"></audio>
 
   <script src="script.js"></script>
 </body>
