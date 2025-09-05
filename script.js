@@ -2,7 +2,7 @@
 const $ = sel => document.querySelector(sel);
 const $$ = sel => document.querySelectorAll(sel);
 
-// -------- Sounds --------
+// Sound helpers
 function playSound(id) {
   if (!localStorage.getItem("sound") || localStorage.getItem("sound") === "on") {
     const sound = $(id);
@@ -86,16 +86,17 @@ $("#summariseBtn").addEventListener("click", () => {
     return;
   }
 
-  // Split into paragraphs for bigger notes
-  const paragraphs = text.split(/\n+/).filter(Boolean);
-  const summaryText = paragraphs.slice(0, 8).join("\n\n"); // bigger summary
-  $("#summary").textContent = summaryText;
+  const sentences = text.split(/[.!?]\s/).filter(Boolean);
+  const summarySentences = sentences.slice(0, 10); // bigger summary
+  $("#summary").innerHTML = summarySentences
+    .map(s => `<div class="card">${s.trim()}.</div>`)
+    .join("");
 
-  localStorage.setItem("summary", $("#summary").textContent);
+  localStorage.setItem("summary", $("#summary").innerHTML);
   playSound("#sSuccess");
 });
 if (localStorage.getItem("summary")) {
-  $("#summary").textContent = localStorage.getItem("summary");
+  $("#summary").innerHTML = localStorage.getItem("summary");
 }
 
 // -------- Generate Q&A --------
@@ -104,9 +105,16 @@ function generateQA(text) {
   const qaPairs = [];
 
   lines.forEach(line => {
-    if (/^(define)/i.test(line) || line.includes(":") || line.includes("-") || line.includes("(")) {
+    if (
+      line.toLowerCase().includes("define") ||
+      line.includes(":") ||
+      line.includes("-") ||
+      line.includes("(")
+    ) {
       let q = line;
-      let a = "";
+      let a = line;
+
+      // Split at first : - or () for answer
       if (line.includes(":")) {
         const parts = line.split(":");
         q = parts[0].trim();
@@ -116,19 +124,15 @@ function generateQA(text) {
         q = parts[0].trim();
         a = parts.slice(1).join("-").trim();
       } else if (line.includes("(") && line.includes(")")) {
-        const parts = line.split("(");
-        q = parts[0].trim();
-        a = parts[1].replace(")", "").trim();
-      } else if (/^(define)/i.test(line)) {
-        const parts = line.split(" ");
-        q = parts.slice(0, 2).join(" ");
-        a = parts.slice(2).join(" ");
+        q = line.replace(/\(.*?\)/g, "").trim();
+        a = line.match(/\(.*?\)/g)?.join(", ").replace(/[()]/g, "") || line;
       }
+
       qaPairs.push({ q, a });
     }
   });
 
-  return qaPairs;
+  return qaPairs.slice(0, 20); // max 20 Q&A
 }
 
 $("#flashBtn").addEventListener("click", () => {
@@ -139,28 +143,18 @@ $("#flashBtn").addEventListener("click", () => {
   }
 
   const qaPairs = generateQA(text);
-  const container = $("#flashcards");
-  container.innerHTML = "";
 
-  qaPairs.forEach(pair => {
-    const qaDiv = document.createElement("div");
-    qaDiv.className = "pane glass";
-    qaDiv.style.marginBottom = "12px";
-
-    qaDiv.innerHTML = `
-      <div class="pane-head"><h3>Q: ${pair.q}</h3></div>
-      <div style="padding: 10px 14px; background: rgba(255,255,255,0.65); border-radius: 12px; border:1px solid var(--stroke);">
-        <strong>Answer:</strong> ${pair.a}
+  $("#flashcards").innerHTML = qaPairs
+    .map(f => `
+      <div class="card" style="margin-bottom:10px;">
+        <div class="card-title">${f.q}</div>
+        <div>${f.a}</div>
       </div>
-    `;
+    `).join("");
 
-    container.appendChild(qaDiv);
-  });
-
-  localStorage.setItem("flashcards", container.innerHTML);
+  localStorage.setItem("flashcards", $("#flashcards").innerHTML);
   playSound("#sSuccess");
 });
-
 if (localStorage.getItem("flashcards")) {
   $("#flashcards").innerHTML = localStorage.getItem("flashcards");
 }
@@ -168,7 +162,7 @@ if (localStorage.getItem("flashcards")) {
 // -------- Clear Button --------
 $("#clearBtn").addEventListener("click", () => {
   notesInput.value = "";
-  $("#summary").textContent = "";
+  $("#summary").innerHTML = "";
   $("#flashcards").innerHTML = "";
   localStorage.removeItem("notes");
   localStorage.removeItem("summary");
@@ -180,7 +174,7 @@ $("#clearBtn").addEventListener("click", () => {
 $("#exportBtn").addEventListener("click", () => {
   const data = {
     notes: notesInput.value,
-    summary: $("#summary").textContent,
+    summary: $("#summary").innerHTML,
     flashcards: $("#flashcards").innerHTML
   };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
@@ -208,7 +202,7 @@ $("#importBtn").addEventListener("click", () => {
         localStorage.setItem("notes", data.notes);
       }
       if (data.summary) {
-        $("#summary").textContent = data.summary;
+        $("#summary").innerHTML = data.summary;
         localStorage.setItem("summary", data.summary);
       }
       if (data.flashcards) {
