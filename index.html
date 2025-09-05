@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AI Notes → Q&A</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NoteSpark → QnA</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -16,8 +16,8 @@
         <span class="brand-title">NoteSpark</span>
       </div>
       <div class="top-actions">
-        <button class="icon-btn" id="themeToggleBtn" aria-label="Toggle theme" title="Toggle Light/Dark">
-          <svg class="icon sun" viewBox="0 0 24 24"><path d="M6.76 4.84l-1.8-1.79L3.17 4.84l1.79 1.8 1.8-1.8zm10.48 0l1.8-1.79 1.79 1.79-1.79 1.8-1.8-1.8zM12 4V1h0v3h0zm0 19v-3h0v3h0zm-8-8H1v0h3v0zm19 0h-3v0h3v0zM6.76 19.16l-1.8 1.79-1.79-1.79 1.79-1.8 1.8 1.8zm10.48 0l1.8 1.79 1.79-1.79-1.79-1.8-1.8 1.8zM12 7a5 5 0 100 10A5 5 0 0012 7z"/></svg>
+        <button class="icon-btn" id="themeToggleBtn" aria-label="Toggle theme">
+          <svg class="icon sun" viewBox="0 0 24 24"><path d="M6.76 4.84l-1.8-1.79L3.17 4.84l1.79 1.8 1.8-1.8zm10.48 0l1.8-1.79 1.79 1.79-1.79 1.8-1.8-1.8zM12 4V1h-0v3h0zm0 19v-3h0v3h0zm-8-8H1v0h3v0zm19 0h-3v0h3v0zM6.76 19.16l-1.8 1.79-1.79-1.79 1.79-1.8 1.8 1.8zm10.48 0l1.8 1.79 1.79-1.79-1.79-1.8-1.8 1.8zM12 7a5 5 0 100 10A5 5 0 0012 7z"/></svg>
           <svg class="icon moon" viewBox="0 0 24 24"><path d="M21.64 13a9 9 0 01-11.31-11A9.99 9.99 0 1021.64 13z"/></svg>
         </button>
       </div>
@@ -32,12 +32,10 @@
 
     <!-- Content -->
     <main class="content">
-
-      <!-- Home -->
       <section id="home" class="tab active">
         <div class="pane glass">
           <div class="pane-head">
-            <h2>Summarise notes & generate Q&A</h2>
+            <h2>Summarise notes & generate QnA</h2>
             <div class="head-actions">
               <button class="chip" id="importBtn">Import</button>
               <button class="chip" id="exportBtn">Export</button>
@@ -48,25 +46,22 @@
 
           <div class="actions-row">
             <button class="btn primary" id="summariseBtn">Summarise Notes</button>
-            <button class="btn accent" id="qnaBtn">Generate Q&A</button>
+            <button class="btn accent" id="generateBtn">Generate QnA</button>
             <button class="btn ghost" id="clearBtn">Clear</button>
           </div>
         </div>
 
-        <div class="grid two-col">
-          <div class="pane glass">
-            <h3>Summary</h3>
-            <div id="summary" class="summary"></div>
-          </div>
+        <div class="pane glass">
+          <h3>Summary</h3>
+          <div id="summary" class="summary"></div>
+        </div>
 
-          <div class="pane glass">
-            <h3>Q&A</h3>
-            <div id="qna" class="cards-wrap"></div>
-          </div>
+        <div class="pane glass">
+          <h3>Questions & Answers</h3>
+          <div id="qna" class="qna-wrap"></div>
         </div>
       </section>
 
-      <!-- Settings -->
       <section id="settings" class="tab">
         <div class="pane glass">
           <h2>Settings</h2>
@@ -79,6 +74,7 @@
                 <span class="slider"></span>
               </label>
             </div>
+
             <div class="setting-card">
               <div class="setting-title">Font Size</div>
               <select id="fontSizeSel" class="select">
@@ -88,6 +84,7 @@
                 <option value="20">XL</option>
               </select>
             </div>
+
             <div class="setting-card">
               <div class="setting-title">Density</div>
               <select id="densitySel" class="select">
@@ -99,25 +96,16 @@
         </div>
       </section>
 
-      <!-- About -->
       <section id="about" class="tab">
         <div class="pane glass">
           <h2>About</h2>
-          <ul class="about-list">
-            <li><strong>App Version:</strong> 2.0.0</li>
-            <li><strong>Purpose:</strong> Summarise notes and generate Q&A.</li>
-            <li><strong>Developer:</strong> Lishith</li>
-          </ul>
+          <p>App Version: 2.0.0</p>
+          <p>Summarise notes and generate QnA with a clean UI.</p>
+          <p>Developer: Lishith</p>
         </div>
       </section>
-
     </main>
   </div>
-
-  <!-- Sounds -->
-  <audio id="sClick" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
-  <audio id="sSuccess" src="https://actions.google.com/sounds/v1/cartoon/pop.ogg"></audio>
-  <audio id="sError" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
 
   <script src="script.js"></script>
 </body>
